@@ -10,5 +10,6 @@
 | 구매할 상품 입력값 파싱 테스트<br>입력 예시: [사이다-2] | `BuyItemInputParser.parseEachItem` <br> 반환값: Map<String, Integer> | 상품명과 수량이 대괄호 안에 있는지 확인 <br> 상품명과 수량이 하이픈(-)으로 연결되어 각각 입력되는지 확인 <br> 상품명은 대괄호나 하이픈을 제외한 모든 문자 가능  <br> 수량이 1이상의 정수인지 확인 <br> 조건 미충족 시 예외 발생 확인 <br> 각 요소 간의 공백은 허용 | 
 | 쉼표 파싱 테스트                          | `ParserWithComma` <br> 반환값: List<String>                         | 구분자인 쉼표(,)로 잘 파싱되는지 확인 <br> 입력값이 없을 시 예외 발생 <br> 리스트에 추가할 때는 양 끝 공백 제거 후 추가                                                                                      | 
 | 문자열 숫자 변환 테스트                      | `NumberConverter` <br> 반환값: int                                  | 정수로 변환 가능한 올바른 문자열 값이 들어왔을 시 정수로 변환해서 반환 <br> 공백 포함, 문자 포함, 소수 입력 시 예외 발생                                                                                        | 
+| 프로모션 기간 확인 테스트                     | `Promotion.isTodayWithinPromotionPeriod` <br> 반환값: boolean       | 설정한 오늘 날짜가 프로모션 전, 후일 경우 false, 프로모션 기간 내일 경우 true 반환 확인                                                                                                         | 
 
 
