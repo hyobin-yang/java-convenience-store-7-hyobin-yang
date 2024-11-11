@@ -58,7 +58,6 @@ public class MainPaymentController {
         }
     }
 
-
     private List<String> inputItemsToPurchase() {
         try {
             String input = inputView.inputPurchaseRequest();

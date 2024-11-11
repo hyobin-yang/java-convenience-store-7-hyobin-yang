@@ -23,7 +23,7 @@ public class ItemInventory {
     private void validateItemDuplication(Item item){
         for (Item addedItem : itemInventory){
             if (isSameItem(addedItem, item)){
-                throw new IllegalArgumentException("이미 존재하는 상품");
+                throw new IllegalArgumentException("[ERROR]: 이미 존재하는 상품입니다.");
             }
         }
     }
