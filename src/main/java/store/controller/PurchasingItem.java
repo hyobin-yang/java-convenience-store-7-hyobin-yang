@@ -1,15 +1,15 @@
 package store.controller;
 
 import store.convenienceStore.Item;
+import store.convenienceStore.ItemInventory;
 
-public class PromotionDTO {
+public class PurchasingItem {
 
     private Item item;
     private int quantityToBuy;
     private int freeQuantity;
 
-    // item에는 일반 아이템 저장됨
-    protected PromotionDTO(Item item, int quantityToBuy, int freeQuantity){
+    protected PurchasingItem(Item item, int quantityToBuy, int freeQuantity){
         this.item = item;
         this.quantityToBuy = quantityToBuy;
         this.freeQuantity = freeQuantity;
@@ -39,7 +39,12 @@ public class PromotionDTO {
         return freeQuantity * item.getItemPrice();
     }
 
-    public long getPriceCanApplyMembership(){
-        return getTotalPrice() - getPromotionDiscount();
+    public long getTotalPriceAppliedPromotion(){
+        if (item.getPromotion() != null){
+            return freeQuantity
+                    * item.getItemPrice()
+                    * (item.getPromotion().getNumberOfItemToBuy() + item.getPromotion().getNumberOfItemToGet());
+        }
+        return 0;
     }
 }
