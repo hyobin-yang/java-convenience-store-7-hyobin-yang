@@ -19,42 +19,42 @@ public class ReceiptController {
     private long totalOriginalPrice = 0;
     private long totalPromotionDiscount = 0;
     private long finalPaymentAmount = 0;
+    private long priceCanGetMembershipDiscount = 0;
 
-    public void printReceipt(List<PromotionDTO> itemToPurchaseInventory, ItemInventory itemInventory, boolean applyMembershipDiscount) {
+    public void printReceipt(List<PurchasingItem> itemToPurchaseInventory, ItemInventory itemInventory, boolean applyMembershipDiscount) {
         this.itemInventory = itemInventory;
-
         outputView.outputReceiptMessage();
 
-        for (PromotionDTO item : itemToPurchaseInventory) {
+        for (PurchasingItem item : itemToPurchaseInventory) {
             processPurchasedItem(item);
             renderFreeItemDetails(item);
             updatePaymentInfo(item);
             deductPurchasedQuantity(itemInventory, item.getItemName(), item.getQuantityToBuy());
         }
-        long membershipDiscountAmount = calculateMembershipDiscount(applyMembershipDiscount, totalOriginalPrice, totalPromotionDiscount);
+        long membershipDiscountAmount = calculateMembershipDiscount(applyMembershipDiscount);
         finalPaymentAmount = calculateFinalPayment(membershipDiscountAmount);
         displayReceiptSummary(membershipDiscountAmount);
     }
 
-    private void processPurchasedItem(PromotionDTO item) {
+    private void processPurchasedItem(PurchasingItem item) {
         outputView.outputPurchasedItem(item.getItemName(), item.getQuantityToBuy(), item.getTotalPrice());
     }
 
-    private void renderFreeItemDetails(PromotionDTO item) {
+    private void renderFreeItemDetails(PurchasingItem item) {
         if (item.getFreeQuantity() > 0) {
             renderFreeItemDetails(item.getItemName(), item.getFreeQuantity());
         }
     }
 
-    private void updatePaymentInfo(PromotionDTO item) {
+    private void updatePaymentInfo(PurchasingItem item) {
         totalItemQuantityToPay += (item.getQuantityToBuy() - item.getFreeQuantity());
-        //totalItemQuantityToPay += item.getQuantityToBuy();
         totalOriginalPrice += item.getTotalPrice();
         totalPromotionDiscount += item.getPromotionDiscount();
+        priceCanGetMembershipDiscount += item.getTotalPrice() - item.getTotalPriceAppliedPromotion();
     }
 
-    private long calculateMembershipDiscount(long eligiblePrice) {
-        return MembershipPolicy.MEMBERSHIP_POLICY.discountPrice(eligiblePrice);
+    private long calculateMembershipDiscount(long price) {
+        return MembershipPolicy.MEMBERSHIP_POLICY.discountPrice(price);
     }
 
     private long calculateFinalPayment(long membershipDiscountAmount) {
@@ -89,9 +89,9 @@ public class ReceiptController {
         itemInventory.deductItemQuantity(generalItem, quantity);
     }
 
-    private long calculateMembershipDiscount(boolean applyMembershipDiscount, long totalOriginalPrice, long totalPromotionDiscount) {
+    private long calculateMembershipDiscount(boolean applyMembershipDiscount) {
         if (applyMembershipDiscount) {
-            return calculateMembershipDiscount(totalOriginalPrice - totalPromotionDiscount);
+            return calculateMembershipDiscount(priceCanGetMembershipDiscount);
         }
         return 0;
     }
