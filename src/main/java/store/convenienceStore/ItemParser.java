@@ -4,7 +4,7 @@ package store.convenienceStore;
 import store.message.Exceptions;
 
 public class ItemParser {
-    private final static String ITEM_FORMAT_REGEX = "^\\[\\s*[^\\]-]+\\s*-[1-9]\\d*\\s*\\]$";
+    private final static String ITEM_FORMAT_REGEX = "^\\[\\s*[^\\]-]+\\s*-\\s*[1-9]\\d*\\s*\\]$";
 
     private final String itemName;
     private final int itemQuantity;
