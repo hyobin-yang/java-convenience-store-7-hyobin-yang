@@ -1,19 +1,15 @@
 package store.controller;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.convenienceStore.Item;
 import store.convenienceStoreHeadOffice.Promotion;
-import store.message.Exceptions;
 import store.view.MockInputProvider;
-import store.view.OutputView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
 
-import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -33,8 +29,8 @@ public class PromotionControllerTest {
         promotionItem.setPromotion(promotion);
 
         //when
-        PromotionDTO expected = new PromotionDTO(promotionItem, 10, 2);
-        PromotionDTO dto = promotionController.getPromotionDTO(generalItem, promotionItem, 10);
+        PurchasingItem expected = new PurchasingItem(promotionItem, 10, 2);
+        PurchasingItem dto = promotionController.getPurchasingItem(generalItem, promotionItem, 10);
 
         //then
         assertThat(dto.getFreeQuantity()).isEqualTo(expected.getFreeQuantity());
@@ -52,8 +48,8 @@ public class PromotionControllerTest {
         promotionItem.setPromotion(promotion);
 
         //when
-        PromotionDTO expected = new PromotionDTO(promotionItem, 10, 0);
-        PromotionDTO dto = promotionController.getPromotionDTO(generalItem, promotionItem, 10);
+        PurchasingItem expected = new PurchasingItem(promotionItem, 10, 0);
+        PurchasingItem dto = promotionController.getPurchasingItem(generalItem, promotionItem, 10);
 
         //then
         assertThat(dto.getFreeQuantity()).isEqualTo(expected.getFreeQuantity());
@@ -71,8 +67,8 @@ public class PromotionControllerTest {
         promotionItem.setPromotion(promotion);
 
         //when
-        PromotionDTO expected = new PromotionDTO(promotionItem, 9, 3);
-        PromotionDTO dto = promotionController.getPromotionDTO(generalItem, promotionItem, 8);
+        PurchasingItem expected = new PurchasingItem(promotionItem, 9, 3);
+        PurchasingItem dto = promotionController.getPurchasingItem(generalItem, promotionItem, 8);
 
         //then
         assertThat(dto.getFreeQuantity()).isEqualTo(expected.getFreeQuantity());
@@ -94,7 +90,7 @@ public class PromotionControllerTest {
         Promotion promotion = new Promotion("탄산2+1", 2, 1, PROMOTION_START_DATE, PROMOTION_END_DATE);
         promotionItem.setPromotion(promotion);
 
-        promotionController.getPromotionDTO(generalItem, promotionItem, 10);
+        promotionController.getPurchasingItem(generalItem, promotionItem, 10);
 
         assertThat(outContent.toString().trim()).isEqualTo("현재 콜라 10개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)");
         System.setOut(originalOut);

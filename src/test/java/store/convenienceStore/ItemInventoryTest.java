@@ -61,7 +61,7 @@ public class ItemInventoryTest {
         //then
         assertThatThrownBy(() -> itemInventory.addItem(item2))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 존재하는 상품");
+                .hasMessage("[ERROR]: 이미 존재하는 상품입니다.");
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ItemInventoryTest {
         //then
         assertThatThrownBy(() -> itemInventory.addItem(item2))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 존재하는 상품");
+                .hasMessage("[ERROR]: 이미 존재하는 상품입니다.");
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ItemInventoryTest {
         //then
         assertThatThrownBy(() -> itemInventory.addItem(item2))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 존재하는 상품");
+                .hasMessage("[ERROR]: 이미 존재하는 상품입니다.");
     }
 
     @Test

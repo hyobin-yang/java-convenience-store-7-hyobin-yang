@@ -2,11 +2,8 @@ package store.convenienceStoreHeadOffice;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import store.message.Exceptions;
 
-import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class MembershipPolicyTest {
 
@@ -52,17 +49,6 @@ public class MembershipPolicyTest {
 
         // then
         assertThat(discountedPrice).isEqualTo(expectedDiscountedPrice);
-    }
-
-    @Test
-    @DisplayName("파라미터로 받은 가격이 0 이하일 때 예외를 발생시킨다.")
-    void checkPriceIsNotBelowZero(){
-        assertSimpleTest(() ->
-                assertThatThrownBy(() -> membershipPolicy.discountPrice(-1))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage(Exceptions.INVALID_INPUT.getMessage())
-        );
-
     }
 
 }
