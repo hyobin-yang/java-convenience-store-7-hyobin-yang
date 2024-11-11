@@ -16,7 +16,7 @@ public class PromotionController {
     private int promotionThreshold;
     private int quantityToBuy;
 
-    public PromotionController(InputProvider inputProvider{
+    public PromotionController(InputProvider inputProvider){
         this.inputView = new InputView(inputProvider);
     }
 
