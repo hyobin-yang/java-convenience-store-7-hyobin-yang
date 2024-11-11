@@ -155,7 +155,6 @@ public class ItemInventoryTest {
 
         //then
         assertThat(isSame).isFalse();
-
     }
 
 }

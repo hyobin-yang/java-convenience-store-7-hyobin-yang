@@ -12,7 +12,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class NumberConverterTest {
-
     private final NumberConverter converter = new NumberConverter();
 
     @Test

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class MembershipPolicyTest {
-
     private final MembershipPolicy membershipPolicy = MembershipPolicy.MEMBERSHIP_POLICY;
 
     @Test

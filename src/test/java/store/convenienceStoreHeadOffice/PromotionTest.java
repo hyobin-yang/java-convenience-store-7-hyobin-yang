@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class PromotionTest {
-
     private Promotion promotion;
 
     @BeforeEach
@@ -30,7 +29,6 @@ public class PromotionTest {
         //then
         assertThat(isWithinPeriod).isTrue();
     }
-
 
     @Test
     @DisplayName("오늘 날짜가 프로모션 기간 전일 때 false를 반환한다.")
@@ -57,5 +55,4 @@ public class PromotionTest {
         //then
         assertThat(isWithinPeriod).isFalse();
     }
-
 }

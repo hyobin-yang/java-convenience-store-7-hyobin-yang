@@ -15,6 +15,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class PromotionControllerTest {
     private PromotionController promotionController;
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private static final LocalDateTime PROMOTION_START_DATE = LocalDateTime.of(2024, 11, 9, 0, 0);
     private static final LocalDateTime PROMOTION_END_DATE = LocalDateTime.of(2024, 12, 9, 0, 0);
 
@@ -75,23 +76,22 @@ public class PromotionControllerTest {
         assertThat(dto.getQuantityToBuy()).isEqualTo(expected.getQuantityToBuy());
     }
 
-    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-
     @Test
     @DisplayName("프로모션 할인이 적용되지 않을 경우 안내 메시지를 출력한다.")
     void shouldDisplayMessageWhenPromotionNotApplied(){
-        //given
+        //given & when
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outContent));
-
         promotionController = new PromotionController(new MockInputProvider("n"));
+
         Item generalItem = new Item("콜라", 1000, 1);
         Item promotionItem = new Item("콜라", 1000, 1);
         Promotion promotion = new Promotion("탄산2+1", 2, 1, PROMOTION_START_DATE, PROMOTION_END_DATE);
-        promotionItem.setPromotion(promotion);
 
+        promotionItem.setPromotion(promotion);
         promotionController.getPurchasingItem(generalItem, promotionItem, 10);
 
+        //then
         assertThat(outContent.toString().trim()).isEqualTo("현재 콜라 10개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)");
         System.setOut(originalOut);
     }

@@ -22,7 +22,6 @@ public class ItemParserTest {
         //then
         assertThat(name).isEqualTo("사이다");
         assertThat(quantity).isEqualTo(2);
-
     }
 
     @Test
@@ -30,7 +29,6 @@ public class ItemParserTest {
     void testValidItemInputReturnsMap2(){
         //given
         String item = "[나폴리맛피아의 밤*티라미수-2]";
-
 
         ItemParser parsedItem = new ItemParser(item);
         String name = parsedItem.getName();

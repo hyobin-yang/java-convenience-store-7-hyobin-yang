@@ -9,7 +9,6 @@ import java.io.PrintStream;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class OutputViewTest {
-
     OutputView outputView = new OutputView();
     ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
@@ -42,7 +41,4 @@ public class OutputViewTest {
         assertThat(outContent.toString().trim()).isEqualTo("- 양주 130,000원 5개");
         System.setOut(originalOut);
     }
-
-
-
 }
