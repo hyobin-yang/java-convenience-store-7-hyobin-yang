@@ -24,6 +24,8 @@ public class MainPaymentController {
     private final PromotionController promotionController;
     private final ReceiptController receiptController;
 
+    private List<PurchasingItem> itemToPurchaseInventory;
+
     public MainPaymentController(InputProvider inputProvider, ItemInventory itemInventory) {
         this.inputView = new InputView(inputProvider);
         this.itemInventory = itemInventory;
@@ -34,9 +36,15 @@ public class MainPaymentController {
     public void startPaymentProcess() {
         outputView.outputWelcomeMessage();
         displayCurrentItemStock();
-        List<String> tokenizedItems = inputItemsToPurchase();
-        List<ChosenItem> pendingItems = initPendingItemInventory(tokenizedItems);
-        List<PurchasingItem> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
+
+//        List<String> tokenizedItems = inputItemsToPurchase();
+//        List<ChosenItem> pendingItems = initPendingItemInventory(tokenizedItems);
+//        List<PurchasingItem> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
+
+        inputItemsToPurchase();
+        //List<ChosenItem> pendingItems = initPendingItemInventory(tokenizedItems);
+        //List<PurchasingItem> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
+
         receiptController.printReceipt(itemToPurchaseInventory, itemInventory, willApplyMembershipDiscount());
         if (shouldContinuePurchasing()) {startPaymentProcess();}
     }
@@ -53,17 +61,19 @@ public class MainPaymentController {
         }
     }
 
-    private List<String> inputItemsToPurchase() {
+    private void inputItemsToPurchase() {
+        itemToPurchaseInventory = new ArrayList<>();
         try {
             String input = inputView.inputPurchaseRequest();
-            return ItemTokenization.tokenize(input);
+            initPendingItemInventory(ItemTokenization.tokenize(input));
         } catch (IllegalArgumentException e) {
             outputView.outputExceptionMessage(Exceptions.INVALID_FORMAT.getMessage());
-            return inputItemsToPurchase();
+            //inputItemsToPurchase();
+            startPaymentProcess();
         }
     }
 
-    private List<ChosenItem> initPendingItemInventory(List<String> tokenizedItems) {
+    private void initPendingItemInventory(List<String> tokenizedItems) {
         List<ChosenItem> pendingItems = new ArrayList<>();
         try{
             for (String itemToken : tokenizedItems) {
@@ -75,25 +85,24 @@ public class MainPaymentController {
             }
         } catch (IllegalArgumentException e){
             outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
-            List<String> newTokenizedItems = inputItemsToPurchase();
-            return initPendingItemInventory(newTokenizedItems);
+            //inputItemsToPurchase();
+            startPaymentProcess();
+//            List<String> newTokenizedItems = inputItemsToPurchase();
+//            return initPendingItemInventory(newTokenizedItems);
         }
-        return pendingItems;
+        getItemsAppliedPromotion(pendingItems);
+        //return pendingItems;
     }
 
     private void validateItemExistence(String itemName){
-//        if ((itemInventory.getPromotionItem(itemName) == null
-//                && itemInventory.getGeneralItem(itemName) == null)){
-//            outputView.outputExceptionMessage(Exceptions.DOES_NOT_EXIST_ITEM.getMessage());
-//            inputItemsToPurchase();
-//        }
         if (itemInventory.getGeneralItem(itemName) == null){
             outputView.outputExceptionMessage(Exceptions.DOES_NOT_EXIST_ITEM.getMessage());
-            inputItemsToPurchase();
+            //inputItemsToPurchase();
+            startPaymentProcess();
         }
     }
 
-    private List<PurchasingItem> getItemsAppliedPromotion(List<ChosenItem> pendingItems) {
+    private void getItemsAppliedPromotion(List<ChosenItem> pendingItems) {
         List<PurchasingItem> purchasingItems = new ArrayList<>();
         for (ChosenItem pendingItem : pendingItems) {
             if (isValidPromotionItem(pendingItem.itemName())) {
@@ -102,7 +111,7 @@ public class MainPaymentController {
                 purchasingItems.add(createStandardPurchase(pendingItem));
             }
         }
-        return purchasingItems;
+        itemToPurchaseInventory = purchasingItems;
     }
 
     private boolean willApplyMembershipDiscount() {
@@ -136,7 +145,6 @@ public class MainPaymentController {
     private void carryOverStockToGeneral(String itemName) {
         Item promotionItem = itemInventory.getPromotionItem(itemName);
         Item generalItem = itemInventory.getGeneralItem(itemName);
-
         generalItem.setItemQuantity(generalItem.getItemQuantity() + promotionItem.getItemQuantity());
         promotionItem.setItemQuantity(0);
     }
@@ -149,14 +157,20 @@ public class MainPaymentController {
         Item generalItem = itemInventory.getGeneralItem(itemName);
         Item promotionItem = itemInventory.getPromotionItem(itemName);
         int totalStock = generalItem.getItemQuantity() + promotionItem.getItemQuantity();
-        validateStock(totalStock, quantityToBuy);
+        try{
+            validateStock(totalStock, quantityToBuy);
+        } catch (IllegalArgumentException e){
+//            inputItemsToPurchase();
+//            return null;
+            startPaymentProcess();
+        }
         return promotionController.getPurchasingItem(generalItem, promotionItem, quantityToBuy);
     }
 
     private void validateStock(int currentStock, int quantityToBuy) {
         if (quantityToBuy > currentStock) {
             outputView.outputExceptionMessage(Exceptions.EXCEED_STOCK_QUANTITY.getMessage());
-            inputItemsToPurchase();
+            throw new IllegalArgumentException();
         }
     }
 
