@@ -1,14 +1,14 @@
-package convenienceStoreHeadOffice;
+package store.convenienceStoreHeadOffice;
 
 import java.time.LocalDateTime;
 
 public class Promotion {
 
-    private String promotionName;
-    private int numberOfItemToBuy;
-    private int numberOfItemToGet;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private final String promotionName;
+    private final int numberOfItemToBuy;
+    private final int numberOfItemToGet;
+    private final LocalDateTime startDate;
+    private final LocalDateTime endDate;
 
     public Promotion(String promotionName, int buy, int get, LocalDateTime startDate, LocalDateTime endDate){
         this.promotionName = promotionName;
@@ -18,7 +18,7 @@ public class Promotion {
         this.endDate = endDate;
     }
 
-    public String getPromotionName(){
+    public String getName(){
         return promotionName;
     }
 

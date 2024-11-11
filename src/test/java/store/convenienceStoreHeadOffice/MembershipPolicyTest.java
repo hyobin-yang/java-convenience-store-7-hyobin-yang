@@ -1,8 +1,8 @@
 package store.convenienceStoreHeadOffice;
 
-import convenienceStoreHeadOffice.MembershipPolicy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import store.message.Exceptions;
 
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -10,17 +10,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class MembershipPolicyTest {
 
-    private MembershipPolicy membershipPolicy = MembershipPolicy.MEMBERSHIP_POLICY;
+    private final MembershipPolicy membershipPolicy = MembershipPolicy.MEMBERSHIP_POLICY;
 
     @Test
     @DisplayName("입력된 가격에 30%의 멤버십 할인이 적용되어 할인되는 금액을 잘 반환하는지 확인한다.")
     void checkDiscountPrice(){
         //given
-        int price = 10_000;
+        long price = 10_000;
         int expectedDiscountPrice = 3_000;
 
         //when
-        int discountPrice = membershipPolicy.discountPrice(price);
+        long discountPrice = membershipPolicy.discountPrice(price);
 
         // then
         assertThat(discountPrice).isEqualTo(expectedDiscountPrice);
@@ -34,7 +34,7 @@ public class MembershipPolicyTest {
         int expectedDiscountedPrice = 8_000;
 
         //when
-        int discountedPrice = membershipPolicy.discountPrice(price);
+        long discountedPrice = membershipPolicy.discountPrice(price);
 
         // then
         assertThat(discountedPrice).isEqualTo(expectedDiscountedPrice);
@@ -48,7 +48,7 @@ public class MembershipPolicyTest {
         int expectedDiscountedPrice = 0;
 
         //when
-        int discountedPrice = membershipPolicy.discountPrice(price);
+        long discountedPrice = membershipPolicy.discountPrice(price);
 
         // then
         assertThat(discountedPrice).isEqualTo(expectedDiscountedPrice);
@@ -60,7 +60,7 @@ public class MembershipPolicyTest {
         assertSimpleTest(() ->
                 assertThatThrownBy(() -> membershipPolicy.discountPrice(-1))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("")
+                        .hasMessage(Exceptions.INVALID_INPUT.getMessage())
         );
 
     }

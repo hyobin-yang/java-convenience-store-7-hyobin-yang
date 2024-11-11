@@ -1,4 +1,4 @@
-package convenienceStoreHeadOffice;
+package store.convenienceStoreHeadOffice;
 
 public class SupplyingItem {
 
@@ -26,9 +26,4 @@ public class SupplyingItem {
     public Promotion getPromotion(){
         return promotion;
     }
-
-    public void initializePromotion(){
-        this.promotion = null;
-    }
-
 }

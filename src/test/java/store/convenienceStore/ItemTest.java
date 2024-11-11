@@ -1,8 +1,8 @@
 package store.convenienceStore;
 
-import convenienceStore.Item;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import store.message.Exceptions;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -19,7 +19,7 @@ public class ItemTest {
         //when&then
         assertThatThrownBy(() -> new Item(name, price, quantity))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("잘못된 가격 형식");
+                .hasMessage(Exceptions.INVALID_INPUT.getMessage());
     }
 
     @Test
@@ -33,7 +33,7 @@ public class ItemTest {
         //when&then
         assertThatThrownBy(() -> new Item(name, price, quantity))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("잘못된 수량 형식");
+                .hasMessage(Exceptions.INVALID_INPUT.getMessage());
     }
 
 }

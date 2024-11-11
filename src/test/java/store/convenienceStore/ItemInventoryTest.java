@@ -1,9 +1,6 @@
 package store.convenienceStore;
 
-import camp.nextstep.edu.missionutils.DateTimes;
-import convenienceStore.Item;
-import convenienceStore.ItemInventory;
-import convenienceStoreHeadOffice.Promotion;
+import store.convenienceStoreHeadOffice.Promotion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -123,6 +120,41 @@ public class ItemInventoryTest {
         assertThatThrownBy(() -> itemInventory.addItem(item2))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 존재하는 상품");
+    }
+
+    @Test
+    @DisplayName("주어진 두 상품의 이름과 적용 프로모션이 같다면 true를 반환한다.")
+    void returnTrueIfItemsAreSame1(){
+        //given
+        Item item1 = new Item("콜라", 1000, 10);
+        Item item2 = new Item("콜라", 1000, 10);
+
+        //when
+        boolean isSame = itemInventory.isSameItem(item1, item2);
+
+        //then
+        assertThat(isSame).isTrue();
+    }
+
+    @Test
+    @DisplayName("주어진 두 상품의 이름이 같아도 프로모션 적용 여부가 다르다면 false를 반환한다.")
+    void returnFalseIfItemsAreDifferent(){
+        //given
+        Item item1 = new Item("콜라", 1000, 10);
+        Item item2 = new Item("콜라", 1000, 10);
+
+        //when
+        Promotion promotion = new Promotion("반짝할인", 1, 1, PROMOTION_START_DATE, PROMOTION_END_DATE);
+        item1.setPromotion(promotion);
+
+        itemInventory.addItem(item1);
+        itemInventory.addItem(item2);
+
+        boolean isSame = itemInventory.isSameItem(item1, item2);
+
+        //then
+        assertThat(isSame).isFalse();
+
     }
 
 }

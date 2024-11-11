@@ -3,13 +3,13 @@ package store.util;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import store.controller.Exceptions;
+import store.message.Exceptions;
 
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-public class YesNoAnswerValidatorTest {
+public class YesNoAnswerTest {
 
     private final YesNoAnswer answerValidator = new YesNoAnswer();
 

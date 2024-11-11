@@ -1,4 +1,6 @@
-package convenienceStoreHeadOffice;
+package store.convenienceStoreHeadOffice;
+
+import store.message.Exceptions;
 
 public enum MembershipPolicy {
 
@@ -12,18 +14,18 @@ public enum MembershipPolicy {
         this.maximumPrice = maximumPrice;
     }
 
-    public int discountPrice(int price){
+    public long discountPrice(long price){
         validatePrice(price);
-        int discountedPrice = (int)(price * (discountRate/100));
+        long discountedPrice = (long)(price * (discountRate/100));
         if (discountedPrice < maximumPrice){
             return discountedPrice;
         }
         return maximumPrice;
     }
 
-    private void validatePrice(int price){
+    private void validatePrice(long price){
         if (price < 0){
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException(Exceptions.INVALID_INPUT.getMessage());
         }
     }
 

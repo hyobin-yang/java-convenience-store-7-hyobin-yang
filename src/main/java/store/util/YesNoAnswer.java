@@ -1,6 +1,6 @@
 package store.util;
 
-import store.controller.Exceptions;
+import store.message.Exceptions;
 
 import java.util.List;
 

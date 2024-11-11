@@ -20,32 +20,32 @@ public class MainPaymentController {
 
     private final InputView inputView;
     private final ItemInventory itemInventory;
-    private final OutputView outputView;
-    private final ItemTokenization tokenization = new ItemTokenization();
+    private final OutputView outputView = new OutputView();
     private final YesNoAnswer yesNoAnswer = new YesNoAnswer();
+    private final ItemTokenization tokenization;
 
     private final PromotionController promotionController;
     private final ReceiptController receiptController;
 
-    public MainPaymentController(InputProvider inputProvider, OutputView outputView, ItemInventory itemInventory) {
+    public MainPaymentController(InputProvider inputProvider, ItemInventory itemInventory) {
         this.inputView = new InputView(inputProvider);
-        this.outputView = outputView;
         this.itemInventory = itemInventory;
-        this.promotionController = new PromotionController(inputProvider);
+        this.promotionController = new PromotionController(inputProvider, inputView);
         this.receiptController = new ReceiptController();
+        this.tokenization = new ItemTokenization();
     }
 
     public void startPaymentProcess() {
         outputView.outputWelcomeMessage();
-
         displayCurrentItemStock();
 
-        List<String> itemsToPurchase = inputItemsToPurchase();
-        List<PendingItem> pendingItems = initPendingItemInventory(itemsToPurchase);
+
+        List<String> tokenizedItems = inputItemsToPurchase();
+        List<PendingItem> pendingItems = initPendingItemInventory(tokenizedItems);
+
         List<PromotionDTO> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
 
         receiptController.printReceipt(itemToPurchaseInventory, itemInventory, willApplyMembershipDiscount());
-
         if (shouldContinuePurchasing()) {startPaymentProcess();}
     }
 
@@ -61,9 +61,11 @@ public class MainPaymentController {
         }
     }
 
+
     private List<String> inputItemsToPurchase() {
         try {
             String input = inputView.inputPurchaseRequest();
+            ItemTokenization tokenization = new ItemTokenization();
             return tokenization.tokenize(input);
         } catch (IllegalArgumentException e) {
             outputView.outputExceptionMessage(Exceptions.INVALID_FORMAT.getMessage());
@@ -82,6 +84,9 @@ public class MainPaymentController {
                 pendingItems.add(new PendingItem(itemName, quantityToBuy));
             }
         } catch (IllegalArgumentException e){
+//            outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
+//            List<String> newTokenizedItems = inputItemsToPurchase();
+//            return initPendingItemInventory(newTokenizedItems);
             outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
             List<String> newTokenizedItems = inputItemsToPurchase();
             return initPendingItemInventory(newTokenizedItems);
