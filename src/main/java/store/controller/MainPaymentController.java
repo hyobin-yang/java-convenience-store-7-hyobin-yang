@@ -1,9 +1,9 @@
 package store.controller;
 
+import store.convenienceStore.ChosenItem;
 import store.convenienceStore.ItemParser;
 import store.convenienceStore.Item;
 import store.convenienceStore.ItemInventory;
-import store.convenienceStore.PendingItem;
 import store.message.Exceptions;
 import store.util.ItemTokenization;
 import store.util.YesNoAnswer;
@@ -22,7 +22,6 @@ public class MainPaymentController {
     private final ItemInventory itemInventory;
     private final OutputView outputView = new OutputView();
     private final YesNoAnswer yesNoAnswer = new YesNoAnswer();
-    private final ItemTokenization tokenization;
 
     private final PromotionController promotionController;
     private final ReceiptController receiptController;
@@ -32,7 +31,6 @@ public class MainPaymentController {
         this.itemInventory = itemInventory;
         this.promotionController = new PromotionController(inputProvider);
         this.receiptController = new ReceiptController();
-        this.tokenization = new ItemTokenization();
     }
 
     public void startPaymentProcess() {
@@ -41,9 +39,8 @@ public class MainPaymentController {
 
 
         List<String> tokenizedItems = inputItemsToPurchase();
-        List<PendingItem> pendingItems = initPendingItemInventory(tokenizedItems);
-
-        List<PromotionDTO> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
+        List<ChosenItem> pendingItems = initPendingItemInventory(tokenizedItems);
+        List<PurchasingItem> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
 
         receiptController.printReceipt(itemToPurchaseInventory, itemInventory, willApplyMembershipDiscount());
         if (shouldContinuePurchasing()) {startPaymentProcess();}
@@ -65,28 +62,24 @@ public class MainPaymentController {
     private List<String> inputItemsToPurchase() {
         try {
             String input = inputView.inputPurchaseRequest();
-            ItemTokenization tokenization = new ItemTokenization();
-            return tokenization.tokenize(input);
+            return ItemTokenization.tokenize(input);
         } catch (IllegalArgumentException e) {
             outputView.outputExceptionMessage(Exceptions.INVALID_FORMAT.getMessage());
             return inputItemsToPurchase();
         }
     }
 
-    private List<PendingItem> initPendingItemInventory(List<String> tokenizedItems) {
-        List<PendingItem> pendingItems = new ArrayList<>();
+    private List<ChosenItem> initPendingItemInventory(List<String> tokenizedItems) {
+        List<ChosenItem> pendingItems = new ArrayList<>();
         try{
             for (String itemToken : tokenizedItems) {
                 ItemParser parsedItem = new ItemParser(itemToken);
                 String itemName = parsedItem.getName();
                 int quantityToBuy = parsedItem.getQuantity();
                 validateItemExistence(itemName);
-                pendingItems.add(new PendingItem(itemName, quantityToBuy));
+                pendingItems.add(new ChosenItem(itemName, quantityToBuy));
             }
         } catch (IllegalArgumentException e){
-//            outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
-//            List<String> newTokenizedItems = inputItemsToPurchase();
-//            return initPendingItemInventory(newTokenizedItems);
             outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
             List<String> newTokenizedItems = inputItemsToPurchase();
             return initPendingItemInventory(newTokenizedItems);
@@ -102,11 +95,11 @@ public class MainPaymentController {
         }
     }
 
-    private List<PromotionDTO> getItemsAppliedPromotion(List<PendingItem> pendingItems) {
-        List<PromotionDTO> purchasedItems = new ArrayList<>();
-        for (PendingItem pendingItem : pendingItems) {
-            if (isValidPromotionItem(pendingItem.getItemName())) {
-                purchasedItems.add(applyPromotion(pendingItem.getItemName(), pendingItem.getQuantityToBuy()));
+    private List<PurchasingItem> getItemsAppliedPromotion(List<ChosenItem> pendingItems) {
+        List<PurchasingItem> purchasedItems = new ArrayList<>();
+        for (ChosenItem pendingItem : pendingItems) {
+            if (isValidPromotionItem(pendingItem.itemName())) {
+                purchasedItems.add(applyPromotion(pendingItem.itemName(), pendingItem.quantityToBuy()));
             } else {
                 purchasedItems.add(createStandardPurchase(pendingItem));
             }
@@ -125,10 +118,10 @@ public class MainPaymentController {
         }
     }
 
-    private PromotionDTO createStandardPurchase(PendingItem pendingItem) {
-        Item generalItem = itemInventory.getGeneralItem(pendingItem.getItemName());
-        validateStock(generalItem.getItemQuantity(), pendingItem.getQuantityToBuy());
-        return new PromotionDTO(generalItem, pendingItem.getQuantityToBuy(), 0);
+    private PurchasingItem createStandardPurchase(ChosenItem pendingItem) {
+        Item generalItem = itemInventory.getGeneralItem(pendingItem.itemName());
+        validateStock(generalItem.getItemQuantity(), pendingItem.quantityToBuy());
+        return new PurchasingItem(generalItem, pendingItem.quantityToBuy(), 0);
     }
 
     private boolean isValidPromotionItem(String itemName) {
@@ -155,17 +148,17 @@ public class MainPaymentController {
         return promotionItem.getPromotion().isTodayWithinPromotionPeriod(DateTimes.now());
     }
 
-    private PromotionDTO applyPromotion(String itemName, int quantityToBuy) {
+    private PurchasingItem applyPromotion(String itemName, int quantityToBuy) {
         Item generalItem = itemInventory.getGeneralItem(itemName);
         Item promotionItem = itemInventory.getPromotionItem(itemName);
         int totalStock = generalItem.getItemQuantity() + promotionItem.getItemQuantity();
         validateStock(totalStock, quantityToBuy);
-        return promotionController.getPromotionDTO(generalItem, promotionItem, quantityToBuy);
+        return promotionController.getPurchasingItem(generalItem, promotionItem, quantityToBuy);
     }
 
     private void validateStock(int currentStock, int quantityToBuy) {
         if (quantityToBuy > currentStock) {
-            outputView.outputExceptionMessage(Exceptions.INSUFFICIENT_STOCK_QUANTITY.getMessage());
+            outputView.outputExceptionMessage(Exceptions.EXCEED_STOCK_QUANTITY.getMessage());
             inputItemsToPurchase();
         }
     }
@@ -181,5 +174,4 @@ public class MainPaymentController {
         }
     }
 }
-
 
