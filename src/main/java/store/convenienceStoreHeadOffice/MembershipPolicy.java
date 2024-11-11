@@ -1,7 +1,5 @@
 package store.convenienceStoreHeadOffice;
 
-import store.message.Exceptions;
-
 public enum MembershipPolicy {
 
     MEMBERSHIP_POLICY(30, 8_000);
@@ -15,18 +13,13 @@ public enum MembershipPolicy {
     }
 
     public long discountPrice(long price){
-        validatePrice(price);
+        if (price < 0){
+            return 0;
+        }
         long discountedPrice = (long)(price * (discountRate/100));
         if (discountedPrice < maximumPrice){
             return discountedPrice;
         }
         return maximumPrice;
     }
-
-    private void validatePrice(long price){
-        if (price < 0){
-            throw new IllegalArgumentException(Exceptions.INVALID_INPUT.getMessage());
-        }
-    }
-
 }
