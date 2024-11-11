@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import store.message.Exceptions;
 
 
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
@@ -63,7 +64,7 @@ public class NumberConverterTest {
         assertSimpleTest(() ->
                 assertThatThrownBy(() -> converter.convertToNumber(input))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("") // TODO: 예외메시지 출력 확인
+                        .hasMessage(Exceptions.INVALID_INPUT.getMessage())
         );
     }
 

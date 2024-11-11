@@ -4,6 +4,7 @@ import store.convenienceStoreHeadOffice.Promotion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import store.message.Exceptions;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,7 +62,7 @@ public class ItemInventoryTest {
         //then
         assertThatThrownBy(() -> itemInventory.addItem(item2))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("[ERROR]: 이미 존재하는 상품입니다.");
+                .hasMessage(Exceptions.ALREADY_EXIST_ITEM.getMessage());
     }
 
     @Test
@@ -97,7 +98,7 @@ public class ItemInventoryTest {
         //then
         assertThatThrownBy(() -> itemInventory.addItem(item2))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("[ERROR]: 이미 존재하는 상품입니다.");
+                .hasMessage(Exceptions.ALREADY_EXIST_ITEM.getMessage());
     }
 
     @Test
@@ -119,7 +120,7 @@ public class ItemInventoryTest {
         //then
         assertThatThrownBy(() -> itemInventory.addItem(item2))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("[ERROR]: 이미 존재하는 상품입니다.");
+                .hasMessage(Exceptions.ALREADY_EXIST_ITEM.getMessage());
     }
 
     @Test
