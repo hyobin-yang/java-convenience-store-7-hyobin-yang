@@ -2,7 +2,7 @@ package store.controller;
 
 import store.convenienceStore.Item;
 import store.message.Exceptions;
-import store.util.YesNoAnswer;
+import store.util.YesNoAnswerValidator;
 
 import store.view.InputProvider;
 import store.view.InputView;
@@ -11,7 +11,7 @@ import store.view.OutputView;
 public class PromotionController {
     private final InputView inputView;
     private final OutputView outputView = new OutputView();
-    private final YesNoAnswer validator = new YesNoAnswer();
+    private final YesNoAnswerValidator validator = new YesNoAnswerValidator();
 
     private int countToBuyForPromotion;
     private int promotionThreshold;
@@ -46,8 +46,7 @@ public class PromotionController {
     private boolean askCustomerToAddItem(String itemName, int additionalQuantity) {
         try {
             String answer = inputView.getAnswerToBringMoreItem(itemName, additionalQuantity);
-            validator.validate(answer);
-            return validator.isPositive(answer);
+            return YesNoAnswerValidator.isPositive(answer);
         } catch (IllegalArgumentException e) {
             outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
             return askCustomerToAddItem(itemName, additionalQuantity);
@@ -81,8 +80,7 @@ public class PromotionController {
     private boolean askToProceedWithoutPromotion(String itemName, int quantity) {
         try {
             String answer = inputView.getAnswerToContinueBuying(itemName, quantity);
-            validator.validate(answer);
-            return validator.isPositive(answer);
+            return YesNoAnswerValidator.isPositive(answer);
         } catch (IllegalArgumentException e) {
             outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
             return askToProceedWithoutPromotion(itemName, quantity);
