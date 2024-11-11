@@ -5,7 +5,6 @@ import store.message.Exceptions;
 import java.util.List;
 
 public class YesNoAnswerValidator {
-
     private static final List<String> POSSIBLE_ANSWERS = List.of("Y", "N", "y", "n");
 
     public static boolean isPositive(String answer){

@@ -11,8 +11,6 @@ import store.view.OutputView;
 public class PromotionController {
     private final InputView inputView;
     private final OutputView outputView = new OutputView();
-    private final YesNoAnswerValidator validator = new YesNoAnswerValidator();
-
     private int countToBuyForPromotion;
     private int promotionThreshold;
     private int quantityToBuy;
@@ -25,11 +23,9 @@ public class PromotionController {
         countToBuyForPromotion = promotionItem.getPromotion().getNumberOfItemToBuy();
         promotionThreshold = countToBuyForPromotion + promotionItem.getPromotion().getNumberOfItemToGet();
         this.quantityToBuy = quantityToBuy;
-
         if (canAddFreePromotionItem(promotionItem.getItemQuantity())) {
             handleAdditionalItemOption(generalItem.getItemName());
         }
-
         int freeItemQuantity = getFreeItemQuantity(promotionItem.getItemQuantity(), generalItem.getItemName());
         return new PurchasingItem(promotionItem, this.quantityToBuy, freeItemQuantity);
     }
@@ -68,7 +64,6 @@ public class PromotionController {
     private int handleInsufficientPromotionStock(int promotionQuantity, String itemName) {
         int freeItemQuantity = promotionQuantity / promotionThreshold;
         int remainingQuantity = this.quantityToBuy - freeItemQuantity * promotionThreshold;
-
         boolean willProceedWithoutPromotion = askToProceedWithoutPromotion(itemName, remainingQuantity);
         if (!willProceedWithoutPromotion) {
             this.quantityToBuy -= remainingQuantity;

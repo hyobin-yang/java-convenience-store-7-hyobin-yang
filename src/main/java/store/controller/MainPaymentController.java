@@ -1,7 +1,7 @@
 package store.controller;
 
 import store.convenienceStore.ChosenItem;
-import store.convenienceStore.ItemParser;
+import store.convenienceStoreHeadOffice.ItemParser;
 import store.convenienceStore.Item;
 import store.convenienceStore.ItemInventory;
 import store.message.Exceptions;
@@ -19,15 +19,14 @@ import java.util.List;
 public class MainPaymentController {
     private final InputView inputView;
     private final ItemInventory itemInventory;
-    private final OutputView outputView = new OutputView();
-
+    private final OutputView outputView;
     private final PromotionController promotionController;
     private final ReceiptController receiptController;
-
     private List<PurchasingItem> itemToPurchaseInventory;
 
     public MainPaymentController(InputProvider inputProvider, ItemInventory itemInventory) {
         this.inputView = new InputView(inputProvider);
+        this.outputView = new OutputView();
         this.itemInventory = itemInventory;
         this.promotionController = new PromotionController(inputProvider);
         this.receiptController = new ReceiptController();

@@ -48,7 +48,7 @@ class ApplicationTest extends NsTest {
         });
 
         assertSimpleTest(() -> {
-            run("[오렌지주스-2]", "Y", "n");
+            run("[오렌지주스-2]", "Y", "n", "n");
             assertThat(output().replaceAll("\\s", "")).contains("내실돈1,800");
         });
 
@@ -72,7 +72,7 @@ class ApplicationTest extends NsTest {
     @DisplayName("여러 개의 프로모션 상품 구매")
     void purchaseMultiplePromotionItems() {
         assertSimpleTest(() -> {
-            run("[오렌지주스-2]", "Y", "n");
+            run("[오렌지주스-2]", "Y", "n", "n");
             assertThat(output().replaceAll("\\s", "")).contains("내실돈1,800");
         });
 

@@ -9,7 +9,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReceiptController {
-
     private final OutputView outputView = new OutputView();
     private final DecimalFormat decimalFormat = new DecimalFormat("#,###");
     private String freeItemDetails = "";
@@ -24,7 +23,6 @@ public class ReceiptController {
     public void printReceipt(List<PurchasingItem> itemToPurchaseInventory, ItemInventory itemInventory, boolean applyMembershipDiscount) {
         this.itemInventory = itemInventory;
         outputView.outputReceiptMessage();
-
         for (PurchasingItem item : itemToPurchaseInventory) {
             processPurchasedItem(item);
             renderFreeItemDetails(item);

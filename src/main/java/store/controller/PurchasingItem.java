@@ -4,7 +4,6 @@ import store.convenienceStore.Item;
 import store.convenienceStore.ItemInventory;
 
 public class PurchasingItem {
-
     private Item item;
     private int quantityToBuy;
     private int freeQuantity;
@@ -13,10 +12,6 @@ public class PurchasingItem {
         this.item = item;
         this.quantityToBuy = quantityToBuy;
         this.freeQuantity = freeQuantity;
-    }
-
-    protected Item getItem(){
-        return item;
     }
 
     protected String getItemName(){

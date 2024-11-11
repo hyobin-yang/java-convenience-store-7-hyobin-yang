@@ -1,11 +1,15 @@
 package store.convenienceStore;
 
+import store.message.Exceptions;
+import store.view.OutputView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemInventory {
 
     private final List<Item> itemInventory;
+    OutputView outputView = new OutputView();
 
     public ItemInventory(){
         this.itemInventory = new ArrayList<>();
@@ -23,7 +27,7 @@ public class ItemInventory {
     private void validateItemDuplication(Item item){
         for (Item addedItem : itemInventory){
             if (isSameItem(addedItem, item)){
-                throw new IllegalArgumentException("[ERROR]: 이미 존재하는 상품입니다.");
+                outputView.outputExceptionMessage(Exceptions.ALREADY_EXIST_ITEM.getMessage());
             }
         }
     }
