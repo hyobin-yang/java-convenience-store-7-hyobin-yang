@@ -6,7 +6,7 @@ import store.convenienceStore.Item;
 import store.convenienceStore.ItemInventory;
 import store.message.Exceptions;
 import store.util.ItemTokenization;
-import store.util.YesNoAnswer;
+import store.util.YesNoAnswerValidator;
 import store.view.InputProvider;
 import store.view.InputView;
 import store.view.OutputView;
@@ -17,11 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainPaymentController {
-
     private final InputView inputView;
     private final ItemInventory itemInventory;
     private final OutputView outputView = new OutputView();
-    private final YesNoAnswer yesNoAnswer = new YesNoAnswer();
 
     private final PromotionController promotionController;
     private final ReceiptController receiptController;
@@ -36,12 +34,9 @@ public class MainPaymentController {
     public void startPaymentProcess() {
         outputView.outputWelcomeMessage();
         displayCurrentItemStock();
-
-
         List<String> tokenizedItems = inputItemsToPurchase();
         List<ChosenItem> pendingItems = initPendingItemInventory(tokenizedItems);
         List<PurchasingItem> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
-
         receiptController.printReceipt(itemToPurchaseInventory, itemInventory, willApplyMembershipDiscount());
         if (shouldContinuePurchasing()) {startPaymentProcess();}
     }
@@ -95,22 +90,21 @@ public class MainPaymentController {
     }
 
     private List<PurchasingItem> getItemsAppliedPromotion(List<ChosenItem> pendingItems) {
-        List<PurchasingItem> purchasedItems = new ArrayList<>();
+        List<PurchasingItem> purchasingItems = new ArrayList<>();
         for (ChosenItem pendingItem : pendingItems) {
             if (isValidPromotionItem(pendingItem.itemName())) {
-                purchasedItems.add(applyPromotion(pendingItem.itemName(), pendingItem.quantityToBuy()));
+                purchasingItems.add(applyPromotion(pendingItem.itemName(), pendingItem.quantityToBuy()));
             } else {
-                purchasedItems.add(createStandardPurchase(pendingItem));
+                purchasingItems.add(createStandardPurchase(pendingItem));
             }
         }
-        return purchasedItems;
+        return purchasingItems;
     }
 
     private boolean willApplyMembershipDiscount() {
         try {
             String answer = inputView.getAnswerToGetMembershipDiscount();
-            yesNoAnswer.validate(answer);
-            return yesNoAnswer.isPositive(answer);
+            return YesNoAnswerValidator.isPositive(answer);
         } catch (IllegalArgumentException e) {
             outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
             return willApplyMembershipDiscount();
@@ -165,12 +159,10 @@ public class MainPaymentController {
     private boolean shouldContinuePurchasing() {
         try {
             String answer = inputView.getAnswerToPurchaseOtherItems();
-            yesNoAnswer.validate(answer);
-            return yesNoAnswer.isPositive(answer);
+            return YesNoAnswerValidator.isPositive(answer);
         } catch (IllegalArgumentException e) {
             outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
             return shouldContinuePurchasing();
         }
     }
 }
-
