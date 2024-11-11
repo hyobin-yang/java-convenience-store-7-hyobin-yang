@@ -1,4 +1,4 @@
-package convenienceStoreHeadOffice;
+package store.convenienceStoreHeadOffice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,5 +15,12 @@ public class HeadOffice {
         ongoingPromotions.add(promotion);
     }
 
-    //TODO: 아이템 삭제, 수정 로직
+    public Promotion getPromotion(String promotionName){
+        for (Promotion promotion : ongoingPromotions) {
+            if (promotion.getName().equals(promotionName)){
+                return promotion;
+            }
+        }
+        return null;
+    }
 }

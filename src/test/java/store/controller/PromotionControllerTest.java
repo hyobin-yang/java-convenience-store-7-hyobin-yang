@@ -1,11 +1,16 @@
 package store.controller;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.convenienceStore.Item;
 import store.convenienceStoreHeadOffice.Promotion;
+import store.message.Exceptions;
 import store.view.MockInputProvider;
+import store.view.OutputView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDateTime;
 
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
@@ -28,8 +33,8 @@ public class PromotionControllerTest {
         promotionItem.setPromotion(promotion);
 
         //when
-        PromotionDTO expected = new PromotionDTO(10, 2);
-        PromotionDTO dto = promotionController.getFreeItemCount(generalItem, promotionItem, 10);
+        PromotionDTO expected = new PromotionDTO(promotionItem, 10, 2);
+        PromotionDTO dto = promotionController.getPromotionDTO(generalItem, promotionItem, 10);
 
         //then
         assertThat(dto.getFreeQuantity()).isEqualTo(expected.getFreeQuantity());
@@ -47,8 +52,8 @@ public class PromotionControllerTest {
         promotionItem.setPromotion(promotion);
 
         //when
-        PromotionDTO expected = new PromotionDTO(10, 0);
-        PromotionDTO dto = promotionController.getFreeItemCount(generalItem, promotionItem, 10);
+        PromotionDTO expected = new PromotionDTO(promotionItem, 10, 0);
+        PromotionDTO dto = promotionController.getPromotionDTO(generalItem, promotionItem, 10);
 
         //then
         assertThat(dto.getFreeQuantity()).isEqualTo(expected.getFreeQuantity());
@@ -66,46 +71,33 @@ public class PromotionControllerTest {
         promotionItem.setPromotion(promotion);
 
         //when
-        PromotionDTO expected = new PromotionDTO(9, 3);
-        PromotionDTO dto = promotionController.getFreeItemCount(generalItem, promotionItem, 8);
+        PromotionDTO expected = new PromotionDTO(promotionItem, 9, 3);
+        PromotionDTO dto = promotionController.getPromotionDTO(generalItem, promotionItem, 8);
 
         //then
         assertThat(dto.getFreeQuantity()).isEqualTo(expected.getFreeQuantity());
         assertThat(dto.getQuantityToBuy()).isEqualTo(expected.getQuantityToBuy());
     }
 
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+
     @Test
-    @DisplayName("구매하고자 하는 상품의 수량이 부족한 경우 예외를 발생시킨다.")
-    void verifyExceptionThrownWhenInsufficientStockForPurchase(){
+    @DisplayName("프로모션 할인이 적용되지 않을 경우 안내 메시지를 출력한다.")
+    void shouldDisplayMessageWhenPromotionNotApplied(){
         //given
-        promotionController = new PromotionController(new MockInputProvider("y"));
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+
+        promotionController = new PromotionController(new MockInputProvider("n"));
         Item generalItem = new Item("콜라", 1000, 1);
         Item promotionItem = new Item("콜라", 1000, 1);
         Promotion promotion = new Promotion("탄산2+1", 2, 1, PROMOTION_START_DATE, PROMOTION_END_DATE);
         promotionItem.setPromotion(promotion);
 
-        assertSimpleTest(() ->
-                assertThatThrownBy(() -> promotionController.getFreeItemCount(generalItem, promotionItem, 10))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage(Exceptions.INSUFFICIENT_STOCK_QUANTITY.getMessage())
-        );
-    }
+        promotionController.getPromotionDTO(generalItem, promotionItem, 10);
 
-    @Test
-    @DisplayName("수량 부족으로 프로모션이 적용되지 않는 경우 구매를 거절할 때 예외를 발생시킨다.")
-    void verifyExceptionThrownWhenCancelPurchase(){
-        //given
-        promotionController = new PromotionController(new MockInputProvider("N"));
-        Item generalItem = new Item("콜라", 1000, 10);
-        Item promotionItem = new Item("콜라", 1000, 5);
-        Promotion promotion = new Promotion("탄산2+1", 2, 1, PROMOTION_START_DATE, PROMOTION_END_DATE);
-        promotionItem.setPromotion(promotion);
-
-        assertSimpleTest(() ->
-                assertThatThrownBy(() -> promotionController.getFreeItemCount(generalItem, promotionItem, 10))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage(Exceptions.CANCEL_PURCHASE.getMessage())
-        );
+        assertThat(outContent.toString().trim()).isEqualTo("현재 콜라 10개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)");
+        System.setOut(originalOut);
     }
 
 }
