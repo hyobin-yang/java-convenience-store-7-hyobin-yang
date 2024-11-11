@@ -30,7 +30,7 @@ public class MainPaymentController {
     public MainPaymentController(InputProvider inputProvider, ItemInventory itemInventory) {
         this.inputView = new InputView(inputProvider);
         this.itemInventory = itemInventory;
-        this.promotionController = new PromotionController(inputProvider, inputView);
+        this.promotionController = new PromotionController(inputProvider);
         this.receiptController = new ReceiptController();
         this.tokenization = new ItemTokenization();
     }
