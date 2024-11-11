@@ -36,15 +36,7 @@ public class MainPaymentController {
     public void startPaymentProcess() {
         outputView.outputWelcomeMessage();
         displayCurrentItemStock();
-
-//        List<String> tokenizedItems = inputItemsToPurchase();
-//        List<ChosenItem> pendingItems = initPendingItemInventory(tokenizedItems);
-//        List<PurchasingItem> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
-
         inputItemsToPurchase();
-        //List<ChosenItem> pendingItems = initPendingItemInventory(tokenizedItems);
-        //List<PurchasingItem> itemToPurchaseInventory = getItemsAppliedPromotion(pendingItems);
-
         receiptController.printReceipt(itemToPurchaseInventory, itemInventory, willApplyMembershipDiscount());
         if (shouldContinuePurchasing()) {startPaymentProcess();}
     }
@@ -68,7 +60,6 @@ public class MainPaymentController {
             initPendingItemInventory(ItemTokenization.tokenize(input));
         } catch (IllegalArgumentException e) {
             outputView.outputExceptionMessage(Exceptions.INVALID_FORMAT.getMessage());
-            //inputItemsToPurchase();
             startPaymentProcess();
         }
     }
@@ -85,19 +76,14 @@ public class MainPaymentController {
             }
         } catch (IllegalArgumentException e){
             outputView.outputExceptionMessage(Exceptions.INVALID_INPUT.getMessage());
-            //inputItemsToPurchase();
             startPaymentProcess();
-//            List<String> newTokenizedItems = inputItemsToPurchase();
-//            return initPendingItemInventory(newTokenizedItems);
         }
         getItemsAppliedPromotion(pendingItems);
-        //return pendingItems;
     }
 
     private void validateItemExistence(String itemName){
         if (itemInventory.getGeneralItem(itemName) == null){
             outputView.outputExceptionMessage(Exceptions.DOES_NOT_EXIST_ITEM.getMessage());
-            //inputItemsToPurchase();
             startPaymentProcess();
         }
     }
@@ -107,9 +93,9 @@ public class MainPaymentController {
         for (ChosenItem pendingItem : pendingItems) {
             if (isValidPromotionItem(pendingItem.itemName())) {
                 purchasingItems.add(applyPromotion(pendingItem.itemName(), pendingItem.quantityToBuy()));
-            } else {
-                purchasingItems.add(createStandardPurchase(pendingItem));
+                continue;
             }
+            purchasingItems.add(createStandardPurchase(pendingItem));
         }
         itemToPurchaseInventory = purchasingItems;
     }
@@ -160,8 +146,6 @@ public class MainPaymentController {
         try{
             validateStock(totalStock, quantityToBuy);
         } catch (IllegalArgumentException e){
-//            inputItemsToPurchase();
-//            return null;
             startPaymentProcess();
         }
         return promotionController.getPurchasingItem(generalItem, promotionItem, quantityToBuy);
