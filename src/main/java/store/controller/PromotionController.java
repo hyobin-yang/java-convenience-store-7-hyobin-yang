@@ -12,6 +12,7 @@ public class PromotionController {
     private final InputView inputView;
     private final OutputView outputView = new OutputView();
     private final YesNoAnswer validator = new YesNoAnswer();
+
     private int countToBuyForPromotion;
     private int promotionThreshold;
     private int quantityToBuy;
@@ -20,10 +21,9 @@ public class PromotionController {
         this.inputView = new InputView(inputProvider);
     }
 
-    public PromotionDTO getPromotionDTO( Item generalItem, Item promotionItem, int quantityToBuy) {
-        int totalStock = calculateTotalStock(generalItem, promotionItem);
-        this.countToBuyForPromotion = promotionItem.getPromotion().getNumberOfItemToBuy();
-        this.promotionThreshold = countToBuyForPromotion + promotionItem.getPromotion().getNumberOfItemToGet();
+    public PurchasingItem getPurchasingItem(Item generalItem, Item promotionItem, int quantityToBuy) {
+        countToBuyForPromotion = promotionItem.getPromotion().getNumberOfItemToBuy();
+        promotionThreshold = countToBuyForPromotion + promotionItem.getPromotion().getNumberOfItemToGet();
         this.quantityToBuy = quantityToBuy;
 
         if (canAddFreePromotionItem(promotionItem.getItemQuantity())) {
@@ -31,11 +31,7 @@ public class PromotionController {
         }
 
         int freeItemQuantity = getFreeItemQuantity(promotionItem.getItemQuantity(), generalItem.getItemName());
-        return new PromotionDTO(generalItem, this.quantityToBuy, freeItemQuantity);
-    }
-
-    private int calculateTotalStock(Item generalItem, Item promotionItem) {
-        return generalItem.getItemQuantity() + promotionItem.getItemQuantity();
+        return new PurchasingItem(promotionItem, this.quantityToBuy, freeItemQuantity);
     }
 
     private boolean canAddFreePromotionItem(int promotionQuantity) {
