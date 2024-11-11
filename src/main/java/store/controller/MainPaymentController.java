@@ -82,10 +82,12 @@ public class MainPaymentController {
     }
 
     private void validateItemExistence(String itemName){
-        if (itemInventory.getGeneralItem(itemName) == null){
+        if ((itemInventory.getPromotionItem(itemName) == null
+                && itemInventory.getGeneralItem(itemName) == null)){
             outputView.outputExceptionMessage(Exceptions.DOES_NOT_EXIST_ITEM.getMessage());
             inputItemsToPurchase();
         }
+
     }
 
     private List<PurchasingItem> getItemsAppliedPromotion(List<ChosenItem> pendingItems) {
